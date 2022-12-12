@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "cfca1b74-b757-4d46-aa94-01bc8f40ecf4",
+		"name": "Token Exchange API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "publish event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"home\":\"USD\",\n    \"foreign\":\"ETH\",\n    \"price\":1523\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/publish-event",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"publish-event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exchange token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"from\":\"ETH\",\n    \"to\":\"ADA\",\n    \"fromAmount\":50\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/token-exchange",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"token-exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tokens",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/token-exchange",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"token-exchange"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
