@@ -65,7 +65,7 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.from").value("DOT"))
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.to").value("BTC"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("11.2648857419"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("11.26489"))
         }
     }
 
@@ -84,7 +84,7 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.from").value("USDT"))
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.to").value("BTC"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("0.5892057507"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("0.5892058"))
         }
     }
 
@@ -100,7 +100,7 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
         )
 
         then: 'should return 7559 dollars'
-        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted {
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted {
             mockMvc.perform(MockMvcRequestBuilders.post('/api/v1/token-exchange')
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapperWrapper.toJson(moneroToTetherRequest)))
@@ -114,14 +114,14 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
         publishUpdatePriceEvent("USDT", "XMR", new Price(1241))
 
         then: 'should return new price for previous market'
-        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted {
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted {
             mockMvc.perform(MockMvcRequestBuilders.post('/api/v1/token-exchange')
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapperWrapper.toJson(moneroToTetherRequest)))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.from").value("XMR"))
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.to").value("USDT"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("1.218283684"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("1.218433"))
         }
 
         and: 'should return new price for USDT/XMR'
@@ -138,16 +138,16 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.from").value("USDT"))
                     .andExpect(MockMvcResultMatchers.jsonPath("\$.to").value("XMR"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("434349.9853189705"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("\$.convertedValue").value("434297.1"))
         }
 
     }
 
-    def 'should not exchange ADA to USDT when such pair not exists'() {
-        when: 'try to convert 1400 ADA to USDT'
+    def 'should not exchange ETC to XMR when such pair not exists'() {
+        when: 'try to convert 1400 ETC to XMR'
         def cardanoToTetherRequest = new TokenExchangeMarketRequest(
-                "ADA",
-                "USDT",
+                "ETC",
+                "XMR",
                 BigDecimal.valueOf(1400)
         )
         def cardanoToTetherResponse = mockMvc.perform(MockMvcRequestBuilders.post('/api/v1/token-exchange')
@@ -157,7 +157,8 @@ class TokenExchangeConversionIntegrationSpec extends IntegrationWithTestContaine
         then: 'should thrown an exception about not existing market pair'
         cardanoToTetherResponse
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("\$.errorType").value("MARKET_NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("\$.errorType").value("TOKEN_NOT_SUPPORTED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("\$.params.token").value("ETC"))
     }
 
     def 'should not exchange ETH to ENJ when such token not exists'() {

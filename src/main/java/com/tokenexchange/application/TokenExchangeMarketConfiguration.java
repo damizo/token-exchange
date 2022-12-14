@@ -8,7 +8,14 @@ import org.springframework.context.annotation.Configuration;
 public class TokenExchangeMarketConfiguration {
 
     @Bean
-    public TokenExchangeMarketPriceStorage marketPriceStorage(StatefulRedisConnection<String, String> connection) {
-        return new TokenExchangeMarketPriceStorage(connection);
+    public TokenExchangeMarketStorage marketPriceStorage(StatefulRedisConnection<String, String> connection) {
+        return new TokenExchangeMarketStorage(connection);
+    }
+
+    @Bean
+    public TokenExchangeConverter tokenExchangeNodeStorage(TokenExchangeMarketStorage marketPriceStorage){
+        return new TokenExchangeConverter(
+                marketPriceStorage
+        );
     }
 }

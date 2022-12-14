@@ -18,20 +18,25 @@ public class TokenExchangeMarketUpdateListener {
 
     private final Logger LOGGER = LoggerFactory.getLogger(TokenExchangeMarketUpdateListener.class);
 
-    private final TokenExchangeMarketPriceStorage tokenPriceStorage;
+    private final TokenExchangeMarketStorage tokenPriceStorage;
     private final ObjectMapperWrapper objectMapperWrapper;
 
+    private final TokenExchangeConverter tokenExchangeNodeStorage;
+
     @Autowired
-    public TokenExchangeMarketUpdateListener(final TokenExchangeMarketPriceStorage tokenPriceStorage,
-                                             final ObjectMapperWrapper objectMapperWrapper) {
+    public TokenExchangeMarketUpdateListener(final TokenExchangeMarketStorage tokenPriceStorage,
+                                             final ObjectMapperWrapper objectMapperWrapper,
+                                             final TokenExchangeConverter tokenExchangeNodeStorage) {
         this.tokenPriceStorage = tokenPriceStorage;
         this.objectMapperWrapper = objectMapperWrapper;
+        this.tokenExchangeNodeStorage = tokenExchangeNodeStorage;
     }
 
     @KafkaListener(groupId = "token-exchange", topics = Topics.MARKET_PRICE_UPDATES)
     void receive(@Payload ConsumerRecord<String, String> event) {
         LOGGER.info("Event update market price received: {}", event.value());
         MarketPriceUpdate marketPriceUpdate = objectMapperWrapper.fromJson(event.value(), MarketPriceUpdate.class);
+        tokenExchangeNodeStorage.addNode(marketPriceUpdate.home(), marketPriceUpdate.foreign());
         tokenPriceStorage.updatePrice(marketPriceUpdate.home(), marketPriceUpdate.foreign(), new Price(marketPriceUpdate.price()));
     }
 }

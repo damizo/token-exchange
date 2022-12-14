@@ -1,8 +1,10 @@
 package com.tokenexchange.domain;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.tokenexchange.infrastructure.shared.MathConstants;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 public class Price {
@@ -11,6 +13,14 @@ public class Price {
 
     public Price(final Long value) {
         this.value = BigDecimal.valueOf(value);
+    }
+
+    public static Price of(final BigDecimal value) {
+        return new Price(value);
+    }
+
+    public static Price of(final Long value) {
+        return new Price(value);
     }
 
     public Price(final String value) {
@@ -23,7 +33,7 @@ public class Price {
 
     @JsonValue
     public BigDecimal value() {
-        return value;
+        return new BigDecimal(value.toPlainString(), new MathContext(MathConstants.SCALE, MathConstants.ROUNDING_MODE));
     }
 
     @Override
