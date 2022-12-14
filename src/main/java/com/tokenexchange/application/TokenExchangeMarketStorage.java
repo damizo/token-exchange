@@ -76,49 +76,4 @@ public class TokenExchangeMarketStorage {
                 .toList();
     }
 
-    public Map<String, Market> findAll() {
-        return this.commands.hgetall(PREFIX_KEY)
-                .entrySet()
-                .stream()
-                .map(value -> {
-                    Token home = resolveHomeToken(value);
-                    Token foreign = resolveForeignToken(value);
-                    Price price = resolvePrice(value);
-                    return new Market(
-                            home,
-                            foreign,
-                            price
-                    );
-                })
-                .collect(Collectors.toMap(Market::key,
-                        Function.identity()));
-    }
-
-    private Price resolvePrice(Map.Entry<String, String> value) {
-        if (Fields.PRICE.equals(value.getKey())) {
-            return new Price(value.getValue());
-        }
-        throw new ParameterizedException(ErrorType.FIELD_NOT_RECOGNIZED, "field", value.getKey());
-    }
-
-    private Token resolveForeignToken(Map.Entry<String, String> value) {
-        if (Fields.HOME.equals(value.getKey())) {
-            return Token.fromValue(value.getValue());
-        }
-        throw new ParameterizedException(ErrorType.FIELD_NOT_RECOGNIZED, "field", value.getKey());
-    }
-
-    private Token resolveHomeToken(Map.Entry<String, String> value) {
-        if (Fields.FOREIGN.equals(value.getKey())) {
-            return Token.fromValue(value.getValue());
-        }
-        throw new ParameterizedException(ErrorType.FIELD_NOT_RECOGNIZED, "field", value.getKey());
-    }
-
-
-    private class Fields {
-        private static final String HOME = "home";
-        private static final String FOREIGN = "foreign";
-        private static final String PRICE = "price";
-    }
 }
