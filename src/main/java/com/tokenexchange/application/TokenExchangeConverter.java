@@ -53,6 +53,7 @@ public class TokenExchangeConverter {
         return Optional.empty();
     }
 
+    //TODO: this algorithm for more complicated cases might be not enough
     private Optional<Price> traverseAndCalculatePrice(BigDecimal fromAmount, Node<Token> homeToken, Node<Token> foreignToken) {
         Queue<Node<Token>> queue = new ArrayDeque<>(homeToken.getNeighbours());
         Node<Token> currentNode = null;
